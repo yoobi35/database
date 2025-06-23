@@ -69,7 +69,7 @@ START TRANSACTION;
 # 1번 계좌에서 100,000 출금
 UPDATE tbl_account
 SET balance = balance - 100000
-WHERE account_id = 1;
+WHERE account_id = 1 AND balance >= 100000;
 
 # 2번 계좌로 100,000 입금
 UPDATE tbl_account
