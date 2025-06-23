@@ -51,7 +51,7 @@ SELECT emp_id, dept_id, emp_name, position, gender, hire_date, salary
   FROM tbl_employee
  ORDER BY hire_date ASC;
  
-# 10. 직급 순으로 조회하되, 같은 직급은 최신 고용 순으로 조회하기
+# 10. 직급의 가나다 순으로 조회하되, 같은 직급은 최신 고용 순으로 조회하기
 SELECT emp_id, dept_id, emp_name, position, gender, hire_date, salary
   FROM tbl_employee
  ORDER BY position ASC, hire_date DESC;
