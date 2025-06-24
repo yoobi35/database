@@ -31,7 +31,7 @@
     (2) cust_id    : 고객번호, 정수, FK (tbl_customer의 cust_id 칼럼을 참조. 고객 정보가 삭제되면 NULL 값으로 변경)
     (3) book_id    : 책번호, 정수, FK (tbl_book의 book_id 칼럼을 참조. 책 정보가 삭제되면 함께 삭제)
     (4) amount     : 판매수량, 정수
-    (5) ordered_at : 주문일, 날짜 및 시간
+    (5) ordered_at : 주문일, 날짜 및 시간 (디폴트 현재 날짜와 시간)
 */
 
 
