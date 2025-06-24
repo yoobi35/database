@@ -274,14 +274,14 @@ SELECT C.cust_name AS 고객명
 # 16. 출판사별로 판매된 책의 개수를 조회하세요.
 /*
     출판사     판매된책수
-    굿스포츠   4
-    나이스북   3
-    대한미디어 1
-    이상미디어 2
+    굿스포츠   8
+    나이스북   8
+    대한미디어 2
+    이상미디어 5
     삼성당     0
 */
 SELECT B.publisher AS 출판사
-     , COUNT(O.order_id) AS 판매된책수
+     , SUM(O.amount) AS 판매된책수
   FROM tbl_book B 
   LEFT OUTER JOIN tbl_order O
     ON B.book_id = O.book_id
