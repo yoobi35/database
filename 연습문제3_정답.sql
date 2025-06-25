@@ -799,7 +799,15 @@ INSERT INTO tbl_player VALUES ("2010803","박진하","K15",NULL,NULL,NULL,"FW","
     조회되는 순서는 다를 수 있습니다.
     100개의 행이 조회됩니다.
 */
-
+SELECT player_name AS "선수이름",
+    CASE 
+        WHEN position = "DF" THEN "수비수"
+        WHEN position = "MF" THEN "미드필더"
+        WHEN position = "FW" THEN "공격수"
+        WHEN position = "GK" THEN "골키퍼"
+    END AS "포지션"
+  FROM tbl_player
+ WHERE team_id IN ("K02", "K05");
 
 # 2. 선수 테이블에서 모든 선수들의 이름과 국적을 조회하세요. 국적의 내림차순으로 조회하세요.
 #    국적이 없는 선수들은 "대한민국"이 국적입니다.
@@ -816,7 +824,10 @@ INSERT INTO tbl_player VALUES ("2010803","박진하","K15",NULL,NULL,NULL,"FW","
     -------------------
     480개의 행이 조회됩니다.
 */
-
+SELECT player_name AS "선수이름"
+     , IFNULL(nation, "대한민국") AS "국적"
+  FROM tbl_player
+ ORDER BY nation DESC;
 
 # 3. 선수 테이블에서 모든 선수들의 국적을 중복 없이 조회하세요. 
 #    해당 국적을 가진 선수가 몇 명인지 함께 조회하세요. 국적이 없으면 조회하지 않습니다.
@@ -832,7 +843,11 @@ INSERT INTO tbl_player VALUES ("2010803","박진하","K15",NULL,NULL,NULL,"FW","
     조회되는 순서는 다를 수 있습니다.
     12개의 행이 조회됩니다.
 */
-
+SELECT nation AS "국적"
+     , COUNT(*) AS "선수"
+  FROM tbl_player
+ WHERE nation IS NOT NULL
+ GROUP BY nation;
 
 # 4. 팀 테이블에서 각 팀의 팀 ID와 우편번호와 연락처를 조회하세요.
 #    우편번호 두 개는 하이픈("-")으로 연결하고, 연락처는 지역번호와 연락처를 괄호("()")로 연결하여 조회하세요.
@@ -848,7 +863,10 @@ INSERT INTO tbl_player VALUES ("2010803","박진하","K15",NULL,NULL,NULL,"FW","
     조회되는 순서는 다를 수 있습니다.
     15개의 행이 조회됩니다.
 */
-
+SELECT team_id AS "팀ID"
+     , CONCAT_WS("-", zip_code1, zip_code2) AS "우편번호"
+     , CONCAT("(", ddd, ")", tel) AS "연락처"
+  FROM tbl_team;
 
 # 5. 선수 테이블을 활용하여 전체 인원수, 키 등록 인원수, 키 미등록 인원수, 최대키, 최소키, 평균키(소수 2자리 반올림)를 조회하세요.
 /*
@@ -857,7 +875,13 @@ INSERT INTO tbl_player VALUES ("2010803","박진하","K15",NULL,NULL,NULL,"FW","
     480       447      33         196     165     179.31
     ----------------------------------------------------
 */
-
+SELECT COUNT(*) AS "전체인원" 
+     , COUNT(height) AS "키 등록"
+     , COUNT(*) - COUNT(height) AS "키 미등록"
+     , MAX(height) AS "최대키"
+     , MIN(height) AS "최소키"
+     , ROUND(AVG(height), 2) AS "평균키"
+  FROM tbl_player;
 
 # 6. 선수 테이블을 활용하여 각 팀 별 인원수를 조회하세요. 인원수의 내림차순으로 정렬하세요.
 /*
@@ -872,7 +896,11 @@ INSERT INTO tbl_player VALUES ("2010803","박진하","K15",NULL,NULL,NULL,"FW","
     ------------
     15개의 행이 조회됩니다.
 */
-
+SELECT team_id AS "팀ID"
+     , COUNT(*) AS "인원수"
+  FROM tbl_player
+ GROUP BY team_id
+ ORDER BY 인원수 DESC;  -- ORDER BY 2 DESC; 도 가능합니다. (2열을 이용해 내림차순)
 
 # 7. 선수 테이블과 팀 테이블을 활용하여 각 선수의 이름과 소속팀 이름을 조회하세요.
 /*
@@ -888,9 +916,16 @@ INSERT INTO tbl_player VALUES ("2010803","박진하","K15",NULL,NULL,NULL,"FW","
    480개의 행이 조회됩니다.
 */
 # 조인 조건 활용
-
+SELECT player_name AS "선수명"
+     , team_name AS "소속팀명"
+  FROM tbl_player p
+ INNER JOIN tbl_team t
+    ON p.team_id = t.team_id;
 # USING 활용
-
+SELECT player_name AS "선수명"
+     , team_name AS "소속팀명"
+  FROM tbl_player
+ INNER JOIN tbl_team USING(team_id);
 
 # 8. 선수, 팀, 경기장 테이블을 활용하여 선수명, 포지션, 국적, 소속팀, 홈경기장을 조회하세요.
 /*
@@ -906,9 +941,23 @@ INSERT INTO tbl_player VALUES ("2010803","박진하","K15",NULL,NULL,NULL,"FW","
     480개의 행이 조회됩니다.
 */
 # 조인 조건 활용
-
+SELECT player_name AS "선수명"
+     , position AS "포지션"
+     , nation AS "국적"
+     , team_name AS "소속팀"
+     , stadium_name AS "홈경기장"
+  FROM tbl_player p
+ INNER JOIN tbl_team t ON p.team_id = t.team_id
+ INNER JOIN tbl_stadium s ON t.stadium_id = s.stadium_id;
 # USING 활용
-
+SELECT player_name AS "선수명"
+     , position AS "포지션"
+     , nation AS "국적"
+     , team_name AS "소속팀"
+     , stadium_name AS "홈경기장"
+  FROM tbl_player
+ INNER JOIN tbl_team USING(team_id)
+ INNER JOIN tbl_stadium USING(stadium_id);
 
 # 9. 팀, 경기장 테이블을 활용하여 각 팀의 이름과 경기장ID, 경기장을 조회하세요.
 #    경기장ID가 존재하는 팀만 조회하고 경기장의 오름차순 정렬으로 조회하세요.
@@ -924,9 +973,19 @@ INSERT INTO tbl_player VALUES ("2010803","박진하","K15",NULL,NULL,NULL,"FW","
     15개의 행이 조회됩니다.
 */
 # 조인 조건 활용
-
+SELECT team_name AS "팀명"
+     , s.stadium_id AS "경기장ID"
+     , stadium_name AS "경기장명"
+  FROM tbl_team t
+ INNER JOIN tbl_stadium s ON t.stadium_id = s.stadium_id
+ ORDER BY stadium_name ASC;
 # USING 활용
-
+SELECT team_name AS "팀명"
+     , stadium_id AS "경기장ID"
+     , stadium_name AS "경기장명"
+  FROM tbl_team
+ INNER JOIN tbl_stadium USING (stadium_id)
+ ORDER BY stadium_name ASC;
 
 # 10. 선수 테이블을 활용하여 키가 전체 키 평균 이상인 선수들을 조회하세요.
 #     선수명, 포지션, 등번호를 선수명의 오름차순으로 조회하세요.
@@ -941,7 +1000,13 @@ INSERT INTO tbl_player VALUES ("2010803","박진하","K15",NULL,NULL,NULL,"FW","
     ---------------------------
     219개의 행이 조회됩니다.
 */
-
+SELECT player_name AS "선수명"
+     , position AS "포지션"
+     , back_no AS "등번호"
+  FROM tbl_player
+ WHERE height >= (SELECT AVG(height)
+                    FROM tbl_player)
+ ORDER BY player_name ASC;
 
 # 11. "정현수"라는 이름을 가진 선수(동명이인)가 속한 팀의 한글 명칭과 영문 명칭, 소속 지역을 조회하세요.
 /*
@@ -951,7 +1016,14 @@ INSERT INTO tbl_player VALUES ("2010803","박진하","K15",NULL,NULL,NULL,"FW","
     일화천마   SEONGNAM ILHWA CHUNMA FC  성남
     ------------------------------------------------
 */
-
+SELECT team_name AS "한글 명칭"
+     , e_team_name AS "영문 명칭"
+     , region_name AS "소속 지역"
+  FROM tbl_team
+ WHERE team_id IN (SELECT team_id 
+                     FROM tbl_player
+                    WHERE player_name = "정현수")
+ ORDER BY team_name;
 
 # 12. 경기일정에 기록된 정보들 중 HOME팀과 AWAY팀의 합산 점수가 가장 높은 경기의 정보를 조회하세요.
 #     경기일자와 경기장, HOME팀, AWAY팀 그리고 각 팀이 기록한 골의 점수를 조회하세요.
@@ -962,3 +1034,15 @@ INSERT INTO tbl_player VALUES ("2010803","박진하","K15",NULL,NULL,NULL,"FW","
     20120427  창원종합운동장  경남FC    5           아이파크  2
     --------------------------------------------------------------------------
 */
+SELECT schedule_dt AS "경기일자"
+      , stadium_name AS "경기장"
+      , home.team_name AS "HOME팀"
+      , home_score AS "HOME팀점수"
+      , away.team_name AS "AWAY팀"
+      , away_score AS "AWAY팀점수"
+  FROM tbl_schedule sc
+ INNER JOIN tbl_stadium st ON sc.stadium_id = st.stadium_id
+ INNER JOIN tbl_team home ON sc.hometeam_id = home.team_id
+ INNER JOIN tbl_team away ON sc.awayteam_id = away.team_id
+ WHERE (home_score + away_score) = (SELECT MAX(home_score + away_score)
+                                       FROM tbl_schedule);
