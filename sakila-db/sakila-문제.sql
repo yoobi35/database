@@ -52,7 +52,7 @@ USE sakila;
 
 ############################## 조회 문제 ##############################
 
-# 1. 고객 테이블에서 각 고객의 이름별로 등록된 고객 수를 구하고, 고객 수가 2명 이상인 이름만 조회하세요.
+# 1. 고객 테이블에서 각 고객의 이름(first_name)별로 등록된 고객 수를 구하고, 고객 수가 2명 이상인 이름만 조회하세요.
 /*
   first_name  cnt
   KELLY        2
@@ -277,14 +277,12 @@ USE sakila;
 
 
 # 3. 고객의 이름과 그들이 대여한 영화 제목을 조회하세요.
-# 대여되지 않은 영화도 포함하여 조회하세요.
 /*
-    title               first_name  last_name
-    SMOKING BARBARELLA  LISA        ANDERSON
-    COLOR PHILADELPHIA  LISA        ANDERSON
+    first_name  last_name  title
+    JOEL        FRANCISCO  ACADEMY DINOSAUR
+    GABRIEL     HARDER     ACADEMY DINOSAUR
+    DIANNE      SHELTON    ACADEMY DINOSAUR
     ...
-    GENTLEMEN STAGE     HELEN       HARRIS
-    FLYING HOOK         HELEN       HARRIS
 */
 
 
